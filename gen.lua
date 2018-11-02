@@ -62,15 +62,24 @@ for idx, room in ipairs(rooms) do
           -- Chance of picking up an object (mood +1)
           for _, obj in ipairs(room) do
             if type(obj) ~= "table" then
+              -- Add an object to a Character's inventory, and remove it from the room.
               print(string.format("The %s picks up the %s", object.name, obj))
               object.inventory[#object.inventory + 1] = obj
-              -- BUG: This removes the character, not the thing they picked up!
-              room[_] = nil
+              table.remove(room, _)
               object.mood = object.mood + 1
               break
             end
           end
           -- TODO: If inventory and someone in the room, chance of attack (mood -2)
+        elseif math.random(2) == 1 then
+        	if #object.inventory > 0 then
+        		-- TODO: check if someone else is in here.
+        		for k, v in ipairs(room) do
+        		  if type(v) == "table" and v ~= object then
+        		  	print(string.format("%s attacks %s with their %s.", object.name, v.name, object.inventory[1]))
+        		  end
+        		end
+        	end
           -- TODO: If inventory and someone in the room, chance of gift (mood +2)
           -- TODO: Also chance of paralyse magic (mood -1)
           local todo = true
