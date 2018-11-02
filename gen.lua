@@ -127,6 +127,16 @@ local tick = function()
         table.remove(a.inventory, 1)
         -- Hurt the person
         b.health = b.health - math.random(10)
+        -- Chance to retaliate!
+        if #b.inventory > 0 and math.random(10) == 1 then
+          print(string.format("The %s retaliates against the %s with the %s!", b.name, a.name, b.inventory[1]))
+          -- Drop weapon into room.
+          print(string.format("%s dropped the %s.\n\n", b.name, b.inventory[1]))
+          room[#room + 1] = b.inventory[1]
+          table.remove(b.inventory, 1)
+          -- Hurt the person
+          a.health = a.health - math.random(20)
+        end
       elseif #b.inventory > 0 and b.health > 0 then
         print(string.format("The %s attacks the %s with the %s!", b.name, a.name, b.inventory[1]))
         -- Drop weapon into room.
@@ -135,6 +145,16 @@ local tick = function()
         table.remove(b.inventory, 1)
         -- Hurt the person
         a.health = a.health - math.random(10)
+        -- Chance to retaliate!
+        if #a.inventory > 0 and math.random(10) == 1 then
+          print(string.format("The %s retaliates against the %s with the %s!", a.name, b.name, a.inventory[1]))
+          -- Drop weapon into room.
+          print(string.format("%s dropped the %s.\n\n", a.name, a.inventory[1]))
+          room[#room + 1] = a.inventory[1]
+          table.remove(a.inventory, 1)
+          -- Hurt the person
+          b.health = b.health - math.random(10)
+        end
       end
     end
 
