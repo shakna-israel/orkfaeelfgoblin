@@ -67,7 +67,7 @@ end
 
 local tick = function()
   -- TODO: Chapter titles
-  print("\n\n# Tick\n\n")
+  print("\n\n# Tick\n\n---\n\n")
 
   for room_index, room in ipairs(world) do
 
@@ -118,7 +118,6 @@ local tick = function()
     if chars ~= false and #chars > 1 and math.random(2) == 1 then
       local a = chars[1]
       local b = chars[2]
-      -- TODO: Chance of retaliation if both have weapons.
       if #a.inventory > 0 and a.health > 0 then
         print(string.format("The %s attacks the %s with the %s!", a.name, b.name, a.inventory[1]))
         -- Drop weapon into room.
@@ -126,7 +125,7 @@ local tick = function()
         room[#room + 1] = a.inventory[1]
         table.remove(a.inventory, 1)
         -- Hurt the person
-        b.health = b.health - math.random(10)
+        b.health = b.health - math.random(20)
         -- Chance to retaliate!
         if #b.inventory > 0 and math.random(10) == 1 then
           print(string.format("The %s retaliates against the %s with the %s!", b.name, a.name, b.inventory[1]))
@@ -135,7 +134,7 @@ local tick = function()
           room[#room + 1] = b.inventory[1]
           table.remove(b.inventory, 1)
           -- Hurt the person
-          a.health = a.health - math.random(20)
+          a.health = a.health - math.random(40)
         end
       elseif #b.inventory > 0 and b.health > 0 then
         print(string.format("The %s attacks the %s with the %s!", b.name, a.name, b.inventory[1]))
@@ -144,7 +143,7 @@ local tick = function()
         room[#room + 1] = b.inventory[1]
         table.remove(b.inventory, 1)
         -- Hurt the person
-        a.health = a.health - math.random(10)
+        a.health = a.health - math.random(20)
         -- Chance to retaliate!
         if #a.inventory > 0 and math.random(10) == 1 then
           print(string.format("The %s retaliates against the %s with the %s!", a.name, b.name, a.inventory[1]))
@@ -153,7 +152,7 @@ local tick = function()
           room[#room + 1] = a.inventory[1]
           table.remove(a.inventory, 1)
           -- Hurt the person
-          b.health = b.health - math.random(10)
+          b.health = b.health - math.random(40)
         end
       end
     end
