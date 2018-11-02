@@ -175,11 +175,11 @@ local tick = function()
             -- If they had inventory, they only just died. Announce it.
             print(string.format("*The %s has died!*\n\n", character.name))
             -- If they had inventory, they only just died... So add dead people parts to the room too.
-            room[#room + 1] = string.format("%s's head", character.name)
-            room[#room + 1] = string.format("%s's arm", character.name)
-            room[#room + 1] = string.format("%s's leg", character.name)
-            room[#room + 1] = string.format("%s's foot", character.name)
-            room[#room + 1] = string.format("%s's hand", character.name)
+            room[#room + 1] = string.format("%s's skull", character.name)
+            room[#room + 1] = string.format("%s's mangled arm", character.name)
+            room[#room + 1] = string.format("%s's detached leg", character.name)
+            room[#room + 1] = string.format("%s's crushed foot", character.name)
+            room[#room + 1] = string.format("%s's dismembered hand", character.name)
           end
         end
       end
