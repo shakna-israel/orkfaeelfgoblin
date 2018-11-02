@@ -1,69 +1,16 @@
-We enter the room number 1.
-In the room, we find: the club, the Ork, .
-We enter the room number 2.
-In the room, we find: the knife, the Fae, .
-The Fae walks to room 3
-We enter the room number 3.
-In the room, we find: the rope, the Elf, the Fae, .
-The Elf walks to room 2
-The Fae walks to room 4
-We enter the room number 4.
-In the room, we find: the sword, the Goblin, the Fae, .
-The Goblin walks to room 1
-The Fae walks to room 2
-We enter the room number 1.
-In the room, we find: the club, the Ork, the Goblin, .
-The Ork walks to room 4
-We enter the room number 2.
-In the room, we find: the knife, the Elf, the Fae, .
-The Elf picks up the knife
-The Fae walks to room 1
-We enter the room number 3.
-In the room, we find: the rope, .
-We enter the room number 4.
-In the room, we find: the sword, the Ork, .
-The Ork walks to room 3
-We enter the room number 1.
-In the room, we find: the club, the Fae, the Goblin, .
-The Fae walks to room 4
-The Goblin walks to room 2
-We enter the room number 2.
-In the room, we find: .
-We enter the room number 3.
-In the room, we find: the rope, the Ork, .
-The Ork walks to room 2
-We enter the room number 4.
-In the room, we find: the sword, the Fae, .
-We enter the room number 1.
-In the room, we find: the club, .
-We enter the room number 2.
-In the room, we find: .
-We enter the room number 3.
-In the room, we find: the rope, .
-We enter the room number 4.
-In the room, we find: the sword, the Fae, .
-The Fae walks to room 2
-We enter the room number 1.
-In the room, we find: the club, .
-We enter the room number 2.
-In the room, we find: .
-We enter the room number 3.
-In the room, we find: the rope, .
-We enter the room number 4.
-In the room, we find: the sword, .
-We enter the room number 1.
-In the room, we find: the club, .
-We enter the room number 2.
-In the room, we find: .
-We enter the room number 3.
-In the room, we find: the rope, .
-We enter the room number 4.
-In the room, we find: the sword, .
-We enter the room number 1.
-In the room, we find: the club, .
-We enter the room number 2.
-In the room, we find: .
-We enter the room number 3.
-In the room, we find: the rope, .
-We enter the room number 4.
-In the room, we find: the sword, .
+We enter room 1.
+The Ork is in the room.
+The club is in the room.
+The Ork moves to the next room.
+We enter room 2.
+The Fae is in the room.
+The Ork is in the room.
+The knife is in the room.
+The Fae picks up the knife.
+We enter room 3.
+The Elf is in the room.
+The rope is in the room.
+We enter room 4.
+The Goblin is in the room.
+The sword is in the room.
+The Goblin moves to the next room.
