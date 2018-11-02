@@ -1,8 +1,8 @@
 local people = {
-  Ork = {name = "Ork", inventory = {}, mood = 0, paralysed = false},
-  Fae = {name = "Fae", inventory = {}, mood = 0, paralysed = false},
-  Elf = {name = "Elf", inventory = {}, mood = 0, paralysed = false},
-  Goblin = {name = "Goblin", inventory = {}, mood = 0, paralysed = false},
+  Ork = {name = "Ork", inventory = {}, mood = 0, paralysed = false, health = 100},
+  Fae = {name = "Fae", inventory = {}, mood = 0, paralysed = false, health = 100},
+  Elf = {name = "Elf", inventory = {}, mood = 0, paralysed = false, health = 100},
+  Goblin = {name = "Goblin", inventory = {}, mood = 0, paralysed = false, health = 100},
 }
 
 local rooms = {
@@ -14,6 +14,7 @@ local rooms = {
 
 math.randomseed(os.time())
 
+for i=1, 7 do
 for idx, room in ipairs(rooms) do
   print(string.format("We enter the room number %s.", idx))
   io.stdout:write("In the room, we find: ")
@@ -23,6 +24,11 @@ for idx, room in ipairs(rooms) do
     for x, y in ipairs(room) do
       if type(y) == "table" then
         io.stdout:write(string.format("the %s, ", y.name))
+        if #y.inventory > 0 then
+          for _, val in ipairs(y.inventory) do
+            io.stdout:write(string.format("(holding a %s), ", val))
+          end
+        end
       else
         io.stdout:write(string.format("the %s, ", y))
       end
@@ -52,8 +58,18 @@ for idx, room in ipairs(rooms) do
           print(string.format("The %s walks to room %d", object.name, nextroom))
           rooms[nextroom][#rooms[nextroom] + 1] = object
           rooms[idx][index] = nil
-        else
-          -- TODO: Chance of picking up an object (mood +1)
+        elseif math.random(2) == 1 then
+          -- Chance of picking up an object (mood +1)
+          for _, obj in ipairs(room) do
+            if type(obj) ~= "table" then
+              print(string.format("The %s picks up the %s", object.name, obj))
+              object.inventory[#object.inventory + 1] = obj
+              -- BUG: This removes the character, not the thing they picked up!
+              room[_] = nil
+              object.mood = object.mood + 1
+              break
+            end
+          end
           -- TODO: If inventory and someone in the room, chance of attack (mood -2)
           -- TODO: If inventory and someone in the room, chance of gift (mood +2)
           -- TODO: Also chance of paralyse magic (mood -1)
@@ -62,4 +78,5 @@ for idx, room in ipairs(rooms) do
       end
     end
   end
+end
 end
