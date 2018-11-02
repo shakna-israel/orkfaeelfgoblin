@@ -99,7 +99,7 @@ local tick = function()
         print(string.format("The %s is in the room.\n\n", weapon))
       end
     else
-      print("There are no weapons on the ground.")
+      print("There are no weapons on the ground.\n\n")
     end
 
     -- Maybe pick up a weapon
