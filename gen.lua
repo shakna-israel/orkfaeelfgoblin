@@ -101,10 +101,13 @@ local tick = function()
     -- Maybe pick up a weapon
     if weap ~= false and chars ~= false and math.random(2) == 1 then
       local character = chars[1]
-      local weapon = weap[1]
-      print(string.format("The %s picks up the %s.", character.name, weapon))
-      remove_weapon(room, weapon)
-      character.inventory[#character.inventory + 1] = weapon
+      -- Only if alive.
+      if character.health > 0 then
+        local weapon = weap[1]
+        print(string.format("The %s picks up the %s.", character.name, weapon))
+        remove_weapon(room, weapon)
+        character.inventory[#character.inventory + 1] = weapon
+      end
     end
 
     -- Maybe attack.
@@ -112,22 +115,22 @@ local tick = function()
       local a = chars[1]
       local b = chars[2]
       -- TODO: Chance of retaliation if both have weapons.
-      if #a.inventory > 0 then
+      if #a.inventory > 0 and a.health > 0 then
         print(string.format("The %s attacks the %s with the %s!", a.name, b.name, a.inventory[1]))
         -- Drop weapon into room.
         print(string.format("%s dropped the %s.", a.name, a.inventory[1]))
         room[#room + 1] = a.inventory[1]
         table.remove(a.inventory, 1)
         -- Hurt the person
-        b.health = b.health - 1
-      elseif #b.inventory > 0 then
+        b.health = b.health - math.random(10)
+      elseif #b.inventory > 0 and b.health > 0 then
         print(string.format("The %s attacks the %s with the %s!", b.name, a.name, b.inventory[1]))
         -- Drop weapon into room.
         print(string.format("%s dropped the %s.", b.name, b.inventory[1]))
         room[#room + 1] = b.inventory[1]
         table.remove(b.inventory, 1)
         -- Hurt the person
-        a.health = a.health - 1
+        a.health = a.health - math.random(10)
       end
     end
 
@@ -183,6 +186,6 @@ end
 
 math.randomseed(os.time())
 -- TODO: work out exact number of ticks needed.
-for i=1, 100 do
+for i=1, 500 do
   tick()
 end
