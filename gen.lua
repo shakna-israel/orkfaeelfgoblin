@@ -1,91 +1,144 @@
-local people = {
-  Ork = {name = "Ork", inventory = {}, mood = 0, paralysed = false, health = 100},
-  Fae = {name = "Fae", inventory = {}, mood = 0, paralysed = false, health = 100},
-  Elf = {name = "Elf", inventory = {}, mood = 0, paralysed = false, health = 100},
-  Goblin = {name = "Goblin", inventory = {}, mood = 0, paralysed = false, health = 100},
+-- TODO: We also need health items
+-- TODO: We should be able to drag bodies around, maybe refine into weapons as well?
+
+local world = {
+  {
+    'club',
+    {name = 'Ork', inventory = {}, health = 100}
+  },
+  {
+    'knife',
+    {name = 'Fae', inventory = {}, health = 100},
+  },
+  {
+    'rope',
+    {name = 'Elf', inventory = {}, health = 100},
+  },
+  {
+    'sword',
+    {name = 'Goblin', inventory = {}, health = 100},
+  },
 }
 
-local rooms = {
-  {'club', people.Ork},
-  {'knife', people.Fae},
-  {'rope', people.Elf},
-  {'sword', people.Goblin},
-}
+local has_object = function(room)
+  local things = {}
+  for ix, v in ipairs(room) do
+    if type(v) ~= "table" then
+      things[#things + 1] = v
+    end
+  end
+  if #things == 0 then
+    return false
+  else
+    return things
+  end
+end
+
+local has_character = function(room)
+  local chars = {}
+  for ix, v in ipairs(room) do
+    if type(v) == "table" then
+      chars[#chars + 1] = v
+    end
+  end
+  if #chars == 0 then
+    return false
+  else
+    return chars
+  end
+end
+
+local remove_weapon = function(place, thing)
+  local index = 0
+  for ix, obj in ipairs(place) do
+    if obj == thing then
+      index = ix
+    end
+  end
+  table.remove(place, index)
+end
+
+local remove_character = function(place, person)
+  local index = 0
+  for ix, obj in ipairs(place) do
+    if obj == person then
+      index = ix
+    end
+  end
+  table.remove(place, index)
+end
+
+local tick = function()
+  for room_index, room in ipairs(world) do
+
+    print(string.format("We enter room %d.", room_index))
+
+    -- Are there people in the room?
+    local chars = has_character(room)
+    if chars ~= false then
+      for character_index, character in ipairs(chars) do
+        print(string.format("The %s is in the room.", character.name))
+        if #character.inventory > 0 then
+          for inv_index, inv in ipairs(character.inventory) do
+            print(string.format("The %s is holding the %s.", character.name, inv))
+          end
+        end
+      end
+    end
+
+    -- Is there a weapon on the ground?
+    local weap = has_object(room)
+    if weap ~= false then
+      for weapon_index, weapon in ipairs(weap) do
+        print(string.format("The %s is in the room.", weapon))
+      end
+    end
+
+    -- Maybe pick up a weapon
+    if weap ~= false and chars ~= false and math.random(2) == 1 then
+      local character = chars[1]
+      local weapon = weap[1]
+      print(string.format("The %s picks up the %s.", character.name, weapon))
+      remove_weapon(room, weapon)
+      character.inventory[#character.inventory + 1] = weapon
+    end
+
+    -- Maybe attack.
+    if chars ~= false and #chars > 1 and math.random(2) == 1 then
+      local a = chars[1]
+      local b = chars[2]
+      if #a.inventory > 0 then
+        print(string.format("The %s attacks the %s with the %s!", a.name, b.name, a.inventory[1]))
+        -- TODO: Drop weapon into room.
+        b.health = b.health - 1
+      elseif #b.inventory > 0 then
+        print(string.format("The %s attacks the %s with the %s!", b.name, a.name, b.inventory[1]))
+        -- TODO: Drop weapon into room.
+        a.health = a.health - 1
+      end
+    end
+
+    -- TODO: Check if anyone is dead.
+    -- If so, drop their items into the room.
+    -- Maybe drop a body part as a weapon.
+
+    -- TODO: Chance of 'Overseer's Blessing'
+    -- All people in a room healed, maybe resurrected
+
+    -- Maybe move room
+    -- TODO: Check alive first
+    if chars ~= false and math.random(2) == 1 then
+      for char_index, character in ipairs(chars) do
+        print(string.format("The %s moves to the next room.", character.name))
+        local nextroom = room_index + 1
+        if nextroom > #world then nextroom = 1 end
+        world[nextroom][#world[nextroom] + 1] = character
+        remove_character(room, character)
+      end
+    end
+
+  end
+end
 
 math.randomseed(os.time())
-
-for i=1, 7 do
-for idx, room in ipairs(rooms) do
-  print(string.format("We enter the room number %s.", idx))
-  io.stdout:write("In the room, we find: ")
-  if #room == 0 then
-    io.stdout:write("nothing.\n")
-  else
-    for x, y in ipairs(room) do
-      if type(y) == "table" then
-        io.stdout:write(string.format("the %s, ", y.name))
-        if #y.inventory > 0 then
-          for _, val in ipairs(y.inventory) do
-            io.stdout:write(string.format("(holding a %s), ", val))
-          end
-        end
-      else
-        io.stdout:write(string.format("the %s, ", y))
-      end
-    end
-    io.stdout:write("\b\b.\n")
-  end
-
-  -- Chance of doing something
-  for index, object in ipairs(room) do
-    if type(object) == "table" then
-      -- If paralysed, do nothing, and become unparalysed.
-      if object.paralysed then
-        print(string.format("The %s is paralysed, and cannot move.", object.name))
-      else
-        -- Chance of going to another room
-        if math.random(2) == 1 then
-          local nextroom = math.random(#rooms)
-          -- Make sure we aren't moving to the room we are actually in.
-          if nextroom == idx then
-            -- By decrementing and looping, we can guarantee linear reassignment
-            -- Instead of a possibly infinite while loop.
-            nextroom = nextroom - 1
-            if nextroom < 1 then
-              nextroom = #rooms
-            end
-          end
-          print(string.format("The %s walks to room %d", object.name, nextroom))
-          rooms[nextroom][#rooms[nextroom] + 1] = object
-          rooms[idx][index] = nil
-        elseif math.random(2) == 1 then
-          -- Chance of picking up an object (mood +1)
-          for _, obj in ipairs(room) do
-            if type(obj) ~= "table" then
-              -- Add an object to a Character's inventory, and remove it from the room.
-              print(string.format("The %s picks up the %s", object.name, obj))
-              object.inventory[#object.inventory + 1] = obj
-              table.remove(room, _)
-              object.mood = object.mood + 1
-              break
-            end
-          end
-          -- TODO: If inventory and someone in the room, chance of attack (mood -2)
-        elseif math.random(2) == 1 then
-        	if #object.inventory > 0 then
-        		-- TODO: check if someone else is in here.
-        		for k, v in ipairs(room) do
-        		  if type(v) == "table" and v ~= object then
-        		  	print(string.format("%s attacks %s with their %s.", object.name, v.name, object.inventory[1]))
-        		  end
-        		end
-        	end
-          -- TODO: If inventory and someone in the room, chance of gift (mood +2)
-          -- TODO: Also chance of paralyse magic (mood -1)
-          local todo = true
-        end
-      end
-    end
-  end
-end
-end
+tick()
