@@ -74,11 +74,14 @@ local tick = function()
     local chars = has_character(room)
     if chars ~= false then
       for character_index, character in ipairs(chars) do
-        print(string.format("The %s is in the room.", character.name))
-        if #character.inventory > 0 then
-          for inv_index, inv in ipairs(character.inventory) do
-            print(string.format("The %s is holding the %s.", character.name, inv))
-          end
+        -- Only announce if alive.
+        if character.health > 0 then
+          print(string.format("The %s is in the room.", character.name))
+          if #character.inventory > 0 then
+            for inv_index, inv in ipairs(character.inventory) do
+              print(string.format("The %s is holding the %s.", character.name, inv))
+            end
+           end
         end
       end
     else
@@ -128,9 +131,26 @@ local tick = function()
       end
     end
 
-    -- TODO: Check if anyone is dead.
-    -- If so, drop their items into the room.
-    -- Maybe drop a body part as a weapon.
+    -- Check if anyone is dead.
+    if chars ~= false then
+      for character_index, character in ipairs(chars) do
+        if character.health < 1 then
+          -- Announce if they're dead.
+          print(string.format("%s's body is in the room.", character.name))
+          -- TODO: Chance of dropping body part as weapon, can't have duplicates.
+          -- If they have inventory, drop it into the room.
+          if #character.inventory > 0 then
+            local x = false
+            while x ~= nil do
+              x = table.remove(character.inventory)
+              if x ~= nil then
+                room[#room + 1] = x
+              end
+            end
+          end
+        end
+      end
+    end
 
     -- TODO: Chance of 'Overseer's Blessing'
     -- All people in a room healed, maybe resurrected
