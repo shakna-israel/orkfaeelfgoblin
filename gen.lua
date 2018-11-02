@@ -126,14 +126,25 @@ local tick = function()
     -- All people in a room healed, maybe resurrected
 
     -- Maybe move room
-    -- TODO: Check alive first
     if chars ~= false and math.random(2) == 1 then
       for char_index, character in ipairs(chars) do
-        print(string.format("The %s moves to the next room.", character.name))
-        local nextroom = room_index + 1
-        if nextroom > #world then nextroom = 1 end
-        world[nextroom][#world[nextroom] + 1] = character
-        remove_character(room, character)
+        -- Only move if *alive*
+        if character.health > 0 then
+          -- Move forwards *or* backwards
+          if math.random(2) == 1 then
+            print(string.format("The %s moves to the next room.", character.name))
+            local nextroom = room_index + 1
+            if nextroom > #world then nextroom = 1 end
+            world[nextroom][#world[nextroom] + 1] = character
+            remove_character(room, character)
+          else
+            print(string.format("The %s moves to the previous room.", character.name))
+            local nextroom = room_index - 1
+            if nextroom < 1 then nextroom = #world end
+            world[nextroom][#world[nextroom] + 1] = character
+            remove_character(room, character)
+          end
+        end
       end
     end
 
@@ -141,4 +152,7 @@ local tick = function()
 end
 
 math.randomseed(os.time())
-tick()
+-- TODO: work out exact number of ticks needed.
+for i=1, 100 do
+  tick()
+end
