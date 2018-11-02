@@ -1,6 +1,3 @@
--- TODO: We also need health items
--- TODO: We should be able to drag bodies around, maybe refine into weapons as well?
-
 local world = {
   {
     'club',
@@ -111,13 +108,22 @@ local tick = function()
     if chars ~= false and #chars > 1 and math.random(2) == 1 then
       local a = chars[1]
       local b = chars[2]
+      -- TODO: Chance of retaliation if both have weapons.
       if #a.inventory > 0 then
         print(string.format("The %s attacks the %s with the %s!", a.name, b.name, a.inventory[1]))
-        -- TODO: Drop weapon into room.
+        -- Drop weapon into room.
+        print(string.format("%s dropped the %s.", a.name, a.inventory[1]))
+        room[#room + 1] = a.inventory[1]
+        table.remove(a.inventory, 1)
+        -- Hurt the person
         b.health = b.health - 1
       elseif #b.inventory > 0 then
         print(string.format("The %s attacks the %s with the %s!", b.name, a.name, b.inventory[1]))
-        -- TODO: Drop weapon into room.
+        -- Drop weapon into room.
+        print(string.format("%s dropped the %s.", b.name, b.inventory[1]))
+        room[#room + 1] = b.inventory[1]
+        table.remove(b.inventory, 1)
+        -- Hurt the person
         a.health = a.health - 1
       end
     end
