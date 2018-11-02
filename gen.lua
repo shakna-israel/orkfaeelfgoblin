@@ -172,6 +172,8 @@ local tick = function()
                 room[#room + 1] = x
               end
             end
+            -- If they had inventory, they only just died. Announce it.
+            print(string.format("*The %s has died!*\n\n", character.name))
             -- If they had inventory, they only just died... So add dead people parts to the room too.
             room[#room + 1] = string.format("%s's head", character.name)
             room[#room + 1] = string.format("%s's arm", character.name)
