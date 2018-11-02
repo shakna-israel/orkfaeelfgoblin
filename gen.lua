@@ -66,9 +66,12 @@ local remove_character = function(place, person)
 end
 
 local tick = function()
+  -- TODO: Chapter titles
+  print("\n\n# Tick\n\n")
+
   for room_index, room in ipairs(world) do
 
-    print(string.format("We enter room %d.", room_index))
+    print(string.format("\n\n## We enter room %d.\n\n", room_index))
 
     -- Are there people in the room?
     local chars = has_character(room)
@@ -82,6 +85,7 @@ local tick = function()
               print(string.format("The %s is holding the %s.", character.name, inv))
             end
            end
+           io.stdout:write("\n\n")
         end
       end
     else
@@ -92,7 +96,7 @@ local tick = function()
     local weap = has_object(room)
     if weap ~= false then
       for weapon_index, weapon in ipairs(weap) do
-        print(string.format("The %s is in the room.", weapon))
+        print(string.format("The %s is in the room.\n\n", weapon))
       end
     else
       print("There are no weapons on the ground.")
@@ -104,7 +108,7 @@ local tick = function()
       -- Only if alive.
       if character.health > 0 then
         local weapon = weap[1]
-        print(string.format("The %s picks up the %s.", character.name, weapon))
+        print(string.format("The %s picks up the %s.\n\n", character.name, weapon))
         remove_weapon(room, weapon)
         character.inventory[#character.inventory + 1] = weapon
       end
@@ -118,7 +122,7 @@ local tick = function()
       if #a.inventory > 0 and a.health > 0 then
         print(string.format("The %s attacks the %s with the %s!", a.name, b.name, a.inventory[1]))
         -- Drop weapon into room.
-        print(string.format("%s dropped the %s.", a.name, a.inventory[1]))
+        print(string.format("%s dropped the %s.\n\n", a.name, a.inventory[1]))
         room[#room + 1] = a.inventory[1]
         table.remove(a.inventory, 1)
         -- Hurt the person
@@ -126,7 +130,7 @@ local tick = function()
       elseif #b.inventory > 0 and b.health > 0 then
         print(string.format("The %s attacks the %s with the %s!", b.name, a.name, b.inventory[1]))
         -- Drop weapon into room.
-        print(string.format("%s dropped the %s.", b.name, b.inventory[1]))
+        print(string.format("%s dropped the %s.\n\n", b.name, b.inventory[1]))
         room[#room + 1] = b.inventory[1]
         table.remove(b.inventory, 1)
         -- Hurt the person
@@ -139,7 +143,7 @@ local tick = function()
       for character_index, character in ipairs(chars) do
         if character.health < 1 then
           -- Announce if they're dead.
-          print(string.format("%s's body is in the room.", character.name))
+          print(string.format("%s's body is in the room.\n\n", character.name))
           -- TODO: Chance of dropping body part as weapon, can't have duplicates.
           -- If they have inventory, drop it into the room.
           if #character.inventory > 0 then
@@ -155,8 +159,35 @@ local tick = function()
       end
     end
 
-    -- TODO: Chance of 'Overseer's Blessing'
+    -- Health check.
+    if chars ~= false then
+      for character_index, character in ipairs(chars) do
+        if character.health > 0 and character.health < 10 then
+          print(string.format("The %s is dying.", character.name))
+        elseif character.health > 0 and character.health < 50 then
+          print(string.format("The %s is badly hurt.", character.name))
+        elseif character.health > 0 and character.health < 80 then
+          print(string.format("The %s is hurt.", character.name))
+        end
+      end
+      io.stdout:write("\n\n")
+    end
+
+    -- Chance of 'Overseer's Blessing'
     -- All people in a room healed, maybe resurrected
+    if math.random(20) == 1 then
+      print(string.format("The Overseer casts their blessing on room %d!\n\n", room_index))
+      if chars ~= false then
+        for character_index, character in ipairs(chars) do
+          if character.health > 0 and character.health < 100 then
+            print(string.format("The %s was healed by the Overseer.\n\n", character.name))
+          elseif character.health < 1 then
+            print(string.format("*The %s was resurrected by the Overseer!*\n\n", character.name))
+          end
+          character.health = 100
+        end
+      end
+    end
 
     -- Maybe move room
     if chars ~= false and math.random(2) == 1 then
@@ -165,13 +196,13 @@ local tick = function()
         if character.health > 0 then
           -- Move forwards *or* backwards
           if math.random(2) == 1 then
-            print(string.format("The %s moves to the next room.", character.name))
+            print(string.format("The %s moves to the next room.\n", character.name))
             local nextroom = room_index + 1
             if nextroom > #world then nextroom = 1 end
             world[nextroom][#world[nextroom] + 1] = character
             remove_character(room, character)
           else
-            print(string.format("The %s moves to the previous room.", character.name))
+            print(string.format("The %s moves to the previous room.\n", character.name))
             local nextroom = room_index - 1
             if nextroom < 1 then nextroom = #world end
             world[nextroom][#world[nextroom] + 1] = character
@@ -185,7 +216,7 @@ local tick = function()
 end
 
 math.randomseed(os.time())
--- TODO: work out exact number of ticks needed.
+-- 500 ticks produces just over 50,000 words.
 for i=1, 500 do
   tick()
 end
