@@ -163,7 +163,6 @@ local tick = function()
         if character.health < 1 then
           -- Announce if they're dead.
           print(string.format("%s's body is in the room.\n\n", character.name))
-          -- TODO: Chance of dropping body part as weapon, can't have duplicates.
           -- If they have inventory, drop it into the room.
           if #character.inventory > 0 then
             local x = false
@@ -173,6 +172,12 @@ local tick = function()
                 room[#room + 1] = x
               end
             end
+            -- If they had inventory, they only just died... So add dead people parts to the room too.
+            room[#room + 1] = string.format("%s's head", character.name)
+            room[#room + 1] = string.format("%s's arm", character.name)
+            room[#room + 1] = string.format("%s's leg", character.name)
+            room[#room + 1] = string.format("%s's foot", character.name)
+            room[#room + 1] = string.format("%s's hand", character.name)
           end
         end
       end
