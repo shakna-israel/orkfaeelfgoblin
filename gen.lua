@@ -84,6 +84,8 @@ local tick = function()
           end
         end
       end
+    else
+      print("There is no one in the room.")
     end
 
     -- Is there a weapon on the ground?
@@ -92,6 +94,8 @@ local tick = function()
       for weapon_index, weapon in ipairs(weap) do
         print(string.format("The %s is in the room.", weapon))
       end
+    else
+      print("There are no weapons on the ground.")
     end
 
     -- Maybe pick up a weapon
